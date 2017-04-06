@@ -15,9 +15,6 @@ export default class Ball {
 		this.vy     = vy     != null ? vy     : this.randomVelocity();
 
         this.mass = Math.PI * Math.pow(this.radius, 2);
-
-        // TMP
-        this.prevAngle = null;
     }
 
     /**
@@ -65,30 +62,6 @@ export default class Ball {
     vectorSize() {
         return Math.sqrt(this.vx * this.vx + this.vy * this.vy);
     }
-
-    /* 99% working, angles between [-Math.PI/2, Math.PI/2]
-
-    angleTo(otherBall) {
-        const dx = this.x - otherBall.x;
-        const dy = this.y - otherBall.y;
-
-        if(dx === 0) return 0;
-        return Math.atan(dy / dx);
-    }
-
-    angle() {
-        if(this.vx === 0) {
-            if(this.vy === 0) return 0;
-            return this.vy < 0 ? -Math.PI / 2 : Math.PI / 2;
-        }
-
-        return Math.atan(this.vy / this.vx);
-    }
-
-    vectorSize() {
-        return Math.sqrt(this.vx * this.vx + this.vy * this.vy) * (this.vx < 0 ? -1 : 1);
-    }
-    */
 
     setAngle(angle) {
         const length = this.vectorSize();
@@ -166,7 +139,7 @@ export default class Ball {
      * @param {number} min Minimum velocity
      * @param {number} max Maximum velocity
      */
-    randomVelocity(min = 60, max = 1000) {
+    randomVelocity(min = 60, max = 600) {
         return (min + Math.random() * (max - min)) * (Math.random() > 0.5 ? 1 : -1);
     }
 

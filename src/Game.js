@@ -22,14 +22,11 @@ export default class Game {
 
 		this.setupInputEvents();
 		
-		this.testCollisions();	
+		// this.testCollisions();	
 		// this.addBall(new Ball({ game: this, x: 0, y: 0, vx: 20, vy: 10, radius: 15 }));
 
 		this.startAnimation();				
 		this.canvas.focus();
-
-		// tmp
-		this.prevAngle = null;
   	}
 
 	testCollisions() {
@@ -158,14 +155,6 @@ export default class Game {
 
 	drawBalls() {
 		this.balls.forEach(ball => ball.draw());
-
-		// if(this.balls.length) {
-		// 	const a = this.balls[0].angle();
-		// 	if(this.prevAngle !== a) {
-		// 		this.prevAngle = a;
-		// 		//console.log("angle", utils.rad2deg(a));
-		// 	}   
-		// }
 	}
 
 	drawLines() {
@@ -180,7 +169,7 @@ export default class Game {
 
 	resolveCollisions() {
 		this.resolveBallToBallCollisions();
-		// this.resolveLineToBallCollisions();
+		this.resolveLineToBallCollisions();
 	}
 
 	resolveBallToBallCollisions() {
@@ -233,7 +222,7 @@ export default class Game {
 		const v1t = ut.dotProduct(v1);
 		const v2t = ut.dotProduct(v2);
 
-		// Tangent velocities after collision
+		// Tangent velocities after collision (remain unchanged)
 		const v1t_ = v1t;
 		const v2t_ = v2t;
 
@@ -251,6 +240,7 @@ export default class Game {
 		const v1_ = v1n_v.add(v1t_v);
 		const v2_ = v2n_v.add(v2t_v);
 
+		// Set new velocities
 		ballA.vx = v1_.x;
 		ballA.vy = v1_.y;
 
@@ -271,9 +261,6 @@ export default class Game {
 
 		this.updateVxVy(ballA, v1, v2, m1, m2, a1, a2, angleOfImpact);
 		this.updateVxVy(ballB, v2, v1, m2, m1, a2, a1, angleOfImpact);
-
-		// ballA.draw();
-		// ballB.draw();
 	}
 
 	// From: https://en.wikipedia.org/wiki/Elastic_collision#Two-dimensional_collision_with_two_moving_objects
@@ -295,7 +282,7 @@ export default class Game {
 	}
 
 	resolveLineToBallCollisions() {
-		return;
+		return; // TODO
 		for(let i = 0; i < this.lines.length; i++) {
 			const line = this.lines[i];
 
