@@ -29,6 +29,16 @@ export default class Game {
 		this.canvas.focus();
   	}
 
+	lockedBalls() {		
+		const ballA = new Ball({ game: this, vx: 5, radius: 40 });
+
+		const ballBColor = utils.randomColor([ ballA.color, constants.COLOR.BLACK ]);
+		const ballB = new Ball({ game: this, x: ballA.x - 20, y: ballA.y, vx: -10, vy: -10, radius: 20, color: ballBColor });
+
+		this.addBall(ballA);
+		this.addBall(ballB);
+	}
+
 	testCollisions() {
 		// +- 40 degree angle from left
 		// this.addBall(new Ball({ game: this, x: 40, y: this.canvas.height / 2 - 50, radius: 40, vx: 300, vy: 0 }));		
