@@ -21,6 +21,7 @@ export default class Game {
 		this.isDrawing = false;		
 
 		this.setupInputEvents();
+		this.testCollisions();
 		
 		// this.testCollisions();	
 		// this.addBall(new Ball({ game: this, x: 0, y: 0, vx: 20, vy: 10, radius: 15 }));
@@ -47,16 +48,16 @@ export default class Game {
 		// this.addBall(new Ball({ game: this, x: this.canvas.width - 40, y: this.canvas.height / 2 - 50, radius: 40, vx: -300, vy: 0 }));		
 
 		// +- 40 degree angle from right below
-		// this.addBall(new Ball({ game: this, x: this.canvas.width - 40, y: this.canvas.height / 2 + 50, radius: 40, vx: -300, vy: 0 }));		
+		// this.addBall(new Ball({ game: this, x: this.canvas.width - 40, y: this.canvas.height / 2 + 105, radius: 30, vx: -200, vy: 0 }));		
 
 		// +- 40 degree angle from bottom
-		this.addBall(new Ball({ game: this, x: this.canvas.width / 2 - 50, y: this.canvas.height - 40, radius: 40, vx: 0, vy: -300 }));		
+		// this.addBall(new Ball({ game: this, x: this.canvas.width / 2 - 50, y: this.canvas.height - 40, radius: 40, vx: 0, vy: -300 }));		
 
 		// +- 40 degree angle from top
-		// this.addBall(new Ball({ game: this, x: this.canvas.width / 2 - 50, y: 40, radius: 40, vx: 0, vy: 300 }));		
+		// this.addBall(new Ball({ game: this, x: this.canvas.width / 2 - 50, y: 40, radius: 40, vx: 10, vy: 300 }));		
 
 		// 0 degree angle from left
-		// this.addBall(new Ball({ game: this, x: 40, y: this.canvas.height / 2, radius: 40, vx: 100, vy: 0 }));				
+		// this.addBall(new Ball({ game: this, x: 40, y: this.canvas.height / 2, radius: 40, vx: 5000, vy: 0 }));				
 
 		// 0 degree angle from right		
 		// this.addBall(new Ball({ game: this, x: this.canvas.width - 40, y: this.canvas.height / 2, radius: 40, vx: -300, vy: 0 }));	
@@ -68,7 +69,7 @@ export default class Game {
 		// this.addBall(new Ball({ game: this, x: this.canvas.width / 2, y: this.canvas.height - 40, radius: 40, vx: 0, vy: 100 }));	
 
 		// Centered
-		this.addBall(new Ball({ game: this, x: this.canvas.width / 2, y: this.canvas.height / 2, radius: 40, vx: 0, vy: 0 }));				
+		// this.addBall(new Ball({ game: this, x: this.canvas.width / 2, y: this.canvas.height / 2, radius: 4, vx: 0, vy: 0 }));				
 	}
 
 	setupInputEvents() {
@@ -156,11 +157,11 @@ export default class Game {
 	}
 
 	draw() {
-		this.clear();
+		this.clear();				
+		this.drawBalls();		
+		this.resolveCollisions();		
 
 		this.drawLines();
-		this.drawBalls();
-		this.resolveCollisions();		
 	}	
 
 	drawBalls() {
@@ -187,26 +188,21 @@ export default class Game {
 			const ballA = this.balls[a];			
 
 			for(let b = a+1; b < this.balls.length; b++) {
-				const ballB = this.balls[b];				
-
+				const ballB = this.balls[b];								
+				
 				// No collision
 				if(!ballA.collidesWith(ballB)) {
 					continue;
-				}			
+				}		
 
-				// this.resolveCollisionWithAngles(ballA, ballB);
-
-				this.resolveCollisionWithVectors(ballA, ballB);
-
-				ballA.draw();
-				ballB.draw();
+				this.resolveBallToBallCollision(ballA, ballB);
 			}
 		}
 	}
 
 	// From: http://vobarian.com/collisions/
 	// Document saved in /docs
-	resolveCollisionWithVectors(ballA, ballB) {
+	resolveBallToBallCollision(ballA, ballB) {
 		// Masses
 		const m1 = ballA.mass;
 		const m2 = ballB.mass;
@@ -251,46 +247,29 @@ export default class Game {
 		const v2_ = v2n_v.add(v2t_v);
 
 		// Set new velocities
-		ballA.vx = v1_.x;
-		ballA.vy = v1_.y;
+		ballA.vx = Math.round(v1_.x);
+		ballA.vy = Math.round(v1_.y);
 
-		ballB.vx = v2_.x;
-		ballB.vy = v2_.y;
+		ballB.vx = Math.round(v2_.x);
+		ballB.vy = Math.round(v2_.y);
+
+		// Move balls to not overlap anymore
+		const overlap = ballA.overlapWith(ballB);
+
+		// Movement is relative to inverse of mass * magnitude
+		const fA = m1 * v1.magnitude();
+		const fB = m2 * v2.magnitude();		
+		const fOverlap = overlap / (fA + fB);
+
+		const ovA = un.multiply(fOverlap * fB);
+		ballA.x = Math.round(ballA.x + ovA.x);
+		ballA.y = Math.round(ballA.y + ovA.y);
+
+		const ovB = un.reverse().multiply(fOverlap * fA);
+		ballB.x = Math.round(ballB.x + ovB.x);
+		ballB.y = Math.round(ballB.y + ovB.y);
 	}
-
-	resolveCollisionWithAngles(ballA, ballB) {
-		const angleOfImpact = ballA.angleTo(ballB);
-
-		const v1 = ballA.vectorSize();
-		const m1 = ballA.mass;
-		const a1 = ballA.angle();
-
-		const v2 = ballB.vectorSize();
-		const m2 = ballB.mass;
-		const a2 = ballB.angle();						
-
-		this.updateVxVy(ballA, v1, v2, m1, m2, a1, a2, angleOfImpact);
-		this.updateVxVy(ballB, v2, v1, m2, m1, a2, a1, angleOfImpact);
-	}
-
-	// From: https://en.wikipedia.org/wiki/Elastic_collision#Two-dimensional_collision_with_two_moving_objects
-	updateVxVy(ball, v1, v2, m1, m2, a1, a2, a) {		
-		let p1 = v1 * Math.cos(a1 - a) * (m1 - m2);
-		let p2 = 2 * m2 * v2 * Math.cos(a2 - a);
-		let p3 = m1 + m2;
-		let p4 = v1 * Math.sin(a1 - a)
-		let p5 = Math.cos(a + (Math.PI / 2));
-
-		const vx = (((p1 + p2) / p3) * Math.cos(a)) + (p4 * p5);
-
-		ball.vx = Math.round(vx);
-		
-		p5 = Math.sin(a + (Math.PI / 2));
-
-		const vy = (((p1 + p2) / p3) * Math.sin(a)) + (p4 * p5);
-		ball.vy = Math.round(vy);
-	}
-
+	
 	resolveLineToBallCollisions() {
 		return; // TODO
 		for(let i = 0; i < this.lines.length; i++) {

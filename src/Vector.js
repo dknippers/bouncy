@@ -24,6 +24,10 @@ export default class Vector {
         return new Vector(-this.y, this.x);
     }
 
+    reverse() {
+        return new Vector(-this.x, -this.y);
+    }
+
     multiply(n) {
         return new Vector(this.x * n, this.y * n);
     }

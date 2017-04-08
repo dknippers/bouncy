@@ -1,5 +1,6 @@
 import constants from './constants';
 import * as utils from './utils';
+import Vector from './Vector';
 
 export default class Ball {
     constructor({ game, x, y, radius, color, vx, vy }) {
@@ -14,7 +15,7 @@ export default class Ball {
         this.vx     = vx     != null ? vx     : this.randomVelocity();
 		this.vy     = vy     != null ? vy     : this.randomVelocity();
 
-        this.mass = Math.PI * Math.pow(this.radius, 2);
+        this.mass = 1;//Math.PI * Math.pow(this.radius, 2);
     }
 
     /**
@@ -24,6 +25,22 @@ export default class Ball {
     collidesWith(otherBall) {
         const distance = this.distanceTo(otherBall);
         return distance < this.radius + otherBall.radius;
+    }
+
+    /**
+     * Returns the overlap between this ball and another ball
+     * @param {Ball} otherBall 
+     */
+    overlapWith(otherBall) {
+        const distance = this.distanceTo(otherBall);
+        return (this.radius + otherBall.radius) - distance;
+    }
+
+    /**
+     * Returns the movement component of this Ball as a Vector instance
+     */
+    getVector() {
+        return new Vector(this.vx, this.vy);
     }
 
     distanceTo(otherBall) {
@@ -69,7 +86,7 @@ export default class Ball {
         this.vy = Math.sin(angle) * length;
     }
 
-    draw() {
+    updatePosition() {
         let dx = 0;
         let dy = 0;
 
@@ -107,6 +124,10 @@ export default class Ball {
             this.x = newX;
             this.y = newY;
         }
+    }
+
+    draw() {     
+        this.updatePosition();
 
         this.ctx.fillStyle = this.color;
         this.ctx.beginPath();
@@ -140,18 +161,18 @@ export default class Ball {
      * @param {number} max Maximum velocity
      */
     randomVelocity(min = 60, max = 600) {
-        return (min + Math.random() * (max - min)) * (Math.random() > 0.5 ? 1 : -1);
+        return Math.floor((min + Math.random() * (max - min)) * (Math.random() > 0.5 ? 1 : -1));
     }
 
     randomX() {
-        return this.radius + (Math.random() * (this.canvas.width - 2 * this.radius));
+        return Math.floor(this.radius + (Math.random() * (this.canvas.width - 2 * this.radius)));
     }
 
     randomY() {
-        return this.radius + (Math.random() * (this.canvas.height - 2 * this.radius));
+        return Math.floor(this.radius + (Math.random() * (this.canvas.height - 2 * this.radius)));
     }
 
     randomRadius(min = 10, max = 30) {
-        return min + Math.random() * (max - min);
+        return Math.floor(min + Math.random() * (max - min));
     }
 }
