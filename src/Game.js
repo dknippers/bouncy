@@ -19,22 +19,23 @@ export default class Game {
 
 		this.line = null; // Line being drawn at the moment
 		this.isDrawing = false;		
+		this.canvas.focus();
 
 		this.setupInputEvents();
-		this.testCollisions();
-		
-		// this.testCollisions();	
-		// this.addBall(new Ball({ game: this, x: 0, y: 0, vx: 20, vy: 10, radius: 15 }));
 
-		this.startAnimation();				
-		this.canvas.focus();
+		this.start();		
   	}
 
+	start() {
+		this.testCollisions();
+		this.startAnimation();				
+	}
+
 	lockedBalls() {		
-		const ballA = new Ball({ game: this, vx: 5, radius: 40 });
+		const ballA = new Ball({ game: this, vx: 5, radius: 40, ignoreOverlap: true });
 
 		const ballBColor = utils.randomColor([ ballA.color, constants.COLOR.BLACK ]);
-		const ballB = new Ball({ game: this, x: ballA.x - 20, y: ballA.y, vx: -10, vy: -10, radius: 20, color: ballBColor });
+		const ballB = new Ball({ game: this, x: ballA.x - 20, y: ballA.y, vx: -10, vy: -10, radius: 20, color: ballBColor, ignoreOverlap: true });
 
 		this.addBall(ballA);
 		this.addBall(ballB);
@@ -57,7 +58,13 @@ export default class Game {
 		// this.addBall(new Ball({ game: this, x: this.canvas.width / 2 - 50, y: 40, radius: 40, vx: 10, vy: 300 }));		
 
 		// 0 degree angle from left
-		// this.addBall(new Ball({ game: this, x: 40, y: this.canvas.height / 2, radius: 40, vx: 5000, vy: 0 }));				
+		this.addBall(new Ball({ game: this, x: 40, y: this.canvas.height/2, radius: 20, vx: 100, vy: 0 }));			
+		// this.lines.push(new Line({ 
+		// 	game: this			
+		// }));
+		// this.lines.push(new Line({ 
+		// 	game: this			
+		// }));
 
 		// 0 degree angle from right		
 		// this.addBall(new Ball({ game: this, x: this.canvas.width - 40, y: this.canvas.height / 2, radius: 40, vx: -300, vy: 0 }));	
@@ -116,6 +123,8 @@ export default class Game {
 	}
 
 	startAnimation() {		
+		if(this.isAnimating) return;
+
 		this.isAnimating = true;
 		this.animationId = requestAnimationFrame(this.animationLoop.bind(this));    
 	}
@@ -173,9 +182,11 @@ export default class Game {
 	}
 
 	reset() {
-		this.clear();
+		// this.stopAnimation();
+		this.clear();		
 		this.balls.length = 0;
-		this.lines.length = 0;
+		this.lines.length = 0;		
+		//this.start();
 	}
 
 	resolveCollisions() {
@@ -217,8 +228,8 @@ export default class Game {
 		const ut = un.tangentVector();
 
 		// Velocity vectors
-		const v1 = new Vector(ballA.vx, ballA.vy);
-		const v2 = new Vector(ballB.vx, ballB.vy);
+		const v1 = ballA.toVector();
+		const v2 = ballB.toVector();
 
 		// Scalar velocities in normal direction
 		const v1n = un.dotProduct(v1);
@@ -249,11 +260,16 @@ export default class Game {
 		// Set new velocities
 		ballA.vx = Math.round(v1_.x);
 		ballA.vy = Math.round(v1_.y);
-
 		ballB.vx = Math.round(v2_.x);
 		ballB.vy = Math.round(v2_.y);
 
-		// Move balls to not overlap anymore
+		// Move balls to not overlap anymore,
+		// but not when both balls are configured
+		// to ignore overlap
+		if(ballA.ignoreOverlap && ballB.ignoreOverlap) {
+			return;
+		}
+
 		const overlap = ballA.overlapWith(ballB);
 
 		// Movement is relative to inverse of mass * magnitude
@@ -270,34 +286,65 @@ export default class Game {
 		ballB.y = Math.round(ballB.y + ovB.y);
 	}
 	
-	resolveLineToBallCollisions() {
-		return; // TODO
+	resolveLineToBallCollisions() {		
 		for(let i = 0; i < this.lines.length; i++) {
 			const line = this.lines[i];
-
-			// Adjust angle to 0 to make calculations much easier
-			const lineAngle = line.angle();						
-			line.setAngle(0);
-			const deltaAngle = 0 - lineAngle;
 
 			for(let j = 0; j < this.balls.length; j++) {
 				const ball = this.balls[j];
 
-				// Adjust angle to match line rotation
-				const ballAngle = ball.angle();
-				ball.changeAngle(deltaAngle);
+				// Tangent and unit tangent vector
+				const t = line.toVector();
+				const ut = t.unitVector();
 
-				// Handle collision
-				if(line.collidesWithBall(ball)) {
-					ball.vy *= -1;
-				}				
+				// Unit vector
+				const un = new Vector(ut.y, -ut.x);
 
-				// Restore angle
-				ball.setAngle(ballAngle);
+				// Check collision
+				const cv = un.multiply(ball.radius);
+				const bx = ball.x + cv.x;
+				const by = ball.y + cv.y;
+				const cv2 = cv.reverse();
+				const cx = ball.x + cv2.x;
+				const cy = ball.y + cv2.y;
+
+				// const line2 = this.lines[0];
+				// line2.x1 = ball.x;
+				// line2.y1 = ball.y;
+				// line2.x2 = bx;
+				// line2.y2 = by;
+				// const line3 = this.lines[1];
+				// line3.x1 = ball.x;
+				// line3.y1 = ball.y;				
+				// line3.x2 = cx;
+				// line3.y2 = cy;
+
+				// No collision
+				if(!line.containsPoint(bx, by, 5) && !line.containsPoint(cx, cy, 5)) continue;				
+							
+				// Ball vector
+				const bv = ball.toVector();
+
+				// Scalar velocities in normal and tangent direction
+				const bvn = un.dotProduct(bv);
+				const bvt = ut.dotProduct(bv);
+
+				// After collision.
+				// Invert normal velocity, tangent velocity remains the same
+				const bvn_ = -bvn;
+				const bvt_ = bvt;
+
+				// Convert to vectors
+				const vn = un.multiply(bvn_);
+				const vt = ut.multiply(bvt_);
+
+				// Create final vector
+				const fv = vn.add(vt);
+
+				// Change ball direction
+				ball.vx = fv.x;
+				ball.vy = fv.y;							
 			}
-
-			// Restore angle
-			line.setAngle(lineAngle);
 		}
 	}
 

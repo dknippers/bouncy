@@ -3,11 +3,13 @@ import * as utils from './utils';
 import Vector from './Vector';
 
 export default class Ball {
-    constructor({ game, x, y, radius, color, vx, vy }) {
+    constructor({ game, x, y, radius, color, vx, vy, ignoreOverlap }) {
         this.game     = game;
         this.canvas   = game.canvas;
         this.ctx      = game.ctx;
         this.color    = color  || utils.randomColor([ constants.COLOR.BLACK ]);        
+        
+        this.ignoreOverlap = ignoreOverlap != null ? ignoreOverlap : false; // <- Only used in the question mark button
 
         this.radius = radius != null ? radius : this.randomRadius();
         this.x      = x      != null ? x      : this.randomX();
@@ -15,7 +17,7 @@ export default class Ball {
         this.vx     = vx     != null ? vx     : this.randomVelocity();
 		this.vy     = vy     != null ? vy     : this.randomVelocity();
 
-        this.mass = 1;//Math.PI * Math.pow(this.radius, 2);
+        this.mass = Math.PI * Math.pow(this.radius, 2);
     }
 
     /**
@@ -39,7 +41,7 @@ export default class Ball {
     /**
      * Returns the movement component of this Ball as a Vector instance
      */
-    getVector() {
+    toVector() {
         return new Vector(this.vx, this.vy);
     }
 

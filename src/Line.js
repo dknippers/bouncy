@@ -1,5 +1,6 @@
 import constants from './constants';
 import * as utils from './utils';
+import Vector from './Vector';
 
 export default class Line {
     constructor({ game, x1, y1, x2, y2, color, width }) {
@@ -29,6 +30,10 @@ export default class Line {
         // console.log(d);
     }
 
+    toVector() {
+        return new Vector(this.x2 - this.x1, this.y2 - this.y1);
+    }
+
     setAngle(angle) {        
         const length = this.length();        
 
@@ -53,6 +58,44 @@ export default class Line {
 
         this.x2 = x1;
         this.y2 = y1;
+    }
+
+    dx() {
+        return this.x2 - this.x1;
+    }
+
+    dy() {
+        return this.y2 - this.y1;
+    }
+
+    containsPoint(x, y, margin = 0) {
+        const minx = Math.min(this.x1, this.x2);
+        const maxx = Math.max(this.x1, this.x2);
+        const miny = Math.min(this.y1, this.y2);
+        const maxy = Math.max(this.y1, this.y2);
+
+        if(x < (minx - margin) || x > (maxx + margin)) return false;
+        if(y < (miny - margin) || y > (maxy + margin)) return false;
+
+        // Normalize from left to right
+        let tdx;
+        let tdy;
+        if(this.x2 >= this.x1) {
+            tdx = this.x2 - this.x1;
+            tdy = this.y2 - this.y1;
+        } else {
+             tdx = this.x1 - this.x2;
+             tdy = this.y1 - this.y2;
+        }
+
+        if(tdx === 0) {
+            return Math.abs(this.x1 - x) <= margin && y >= (miny - margin) && y <= (maxy + margin);
+        }
+
+        const dx = x - this.x1;
+        const dy = dx * (tdy / tdx);        
+        const targetY = this.y1 + dy;
+        return Math.abs(targetY - y) <= margin;
     }
 
     length() {

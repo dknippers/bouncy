@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build-game": "set NODE_ENV=production&& browserify src/index.js -t [ envify --NODE_ENV production ] -p [ minifyify --no-map ] > build/js/perplex.js",
-    "watch-game": "watchify src/index.js -o build/js/perplex.js -v"
+    "build-game": "set NODE_ENV=production&& browserify src/index.js -t [ envify --NODE_ENV production ] -p [ minifyify --no-map ] > build/js/game.js",
+    "watch-game": "watchify src/index.js -o build/js/game.js -v"
   },
   "author": "",
   "license": "ISC",
