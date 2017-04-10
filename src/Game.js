@@ -22,20 +22,17 @@ export default class Game {
 		this.canvas.focus();
 
 		this.setupInputEvents();
-
-		this.start();		
+		
+		//this.testCollisions();
+		
+		this.startAnimation();			
   	}
-
-	start() {
-		this.testCollisions();
-		this.startAnimation();				
-	}
 
 	lockedBalls() {		
 		const ballA = new Ball({ game: this, vx: 5, vy: 400, r: 40, ignoreOverlap: true });
 
 		const ballBColor = utils.randomColor([ ballA.color, constants.COLOR.BLACK ]);
-		const ballB = new Ball({ game: this, x: ballA.x - 20, y: ballA.y, vx: -10, vy: -10, r: 20, color: ballBColor, ignoreOverlap: true });
+		const ballB = new Ball({ game: this, x: ballA.x - 20, y: ballA.y, vx: 10, vy: 10, r: 20, color: ballBColor, ignoreOverlap: true });
 
 		this.addBall(ballA);
 		this.addBall(ballB);
