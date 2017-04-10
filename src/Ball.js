@@ -3,7 +3,7 @@ import * as utils from './utils';
 import Vector from './Vector';
 
 export default class Ball {
-    constructor({ game, x, y, radius, color, vx, vy, ignoreOverlap }) {
+    constructor({ game, x, y, r, v, vx, vy, color, ignoreOverlap }) {
         this.game     = game;
         this.canvas   = game.canvas;
         this.ctx      = game.ctx;
@@ -11,13 +11,16 @@ export default class Ball {
         
         this.ignoreOverlap = ignoreOverlap != null ? ignoreOverlap : false; // <- Only used in the question mark button
 
-        this.radius = radius != null ? radius : this.randomRadius();
-        this.x      = x      != null ? x      : this.randomX();
-        this.y      = y      != null ? y      : this.randomY();
-        this.vx     = vx     != null ? vx     : this.randomVelocity();
-		this.vy     = vy     != null ? vy     : this.randomVelocity();
+        // Radius is needed to compute random X and Y
+        this.r = r != null ? r : this.randomR();        
+        this.x = x != null ? x : this.randomX();
+        this.y = y != null ? y : this.randomY();        
+        this.v = v != null ? v : this.randomV();		
 
-        this.mass = Math.PI * Math.pow(this.radius, 2);
+        if(vx != null) this.v.x = vx;
+        if(vy != null) this.v.y = vy;
+
+        this.mass = Math.PI * Math.pow(this.r, 2);
     }
 
     /**
@@ -26,7 +29,7 @@ export default class Ball {
      */
     collidesWith(otherBall) {
         const distance = this.distanceTo(otherBall);
-        return distance < this.radius + otherBall.radius;
+        return distance < this.r + otherBall.r;
     }
 
     /**
@@ -35,57 +38,13 @@ export default class Ball {
      */
     overlapWith(otherBall) {
         const distance = this.distanceTo(otherBall);
-        return (this.radius + otherBall.radius) - distance;
-    }
-
-    /**
-     * Returns the movement component of this Ball as a Vector instance
-     */
-    toVector() {
-        return new Vector(this.vx, this.vy);
+        return (this.r + otherBall.r) - distance;
     }
 
     distanceTo(otherBall) {
         const dx = this.x - otherBall.x;
         const dy = this.y - otherBall.y;
         return Math.sqrt(dx * dx + dy * dy);
-    }
-
-    angleTo(otherBall) {
-        const dx = this.x - otherBall.x;
-        const dy = this.y - otherBall.y;
-        if(dx === 0) {
-            if(dy === 0) return 0;
-            return Math.PI / 2;
-        }
-        if(dy === 0) return 0;        
-        return Math.abs(Math.atan(dy / dx));
-    }
-
-    angle() {                
-        if(this.vx === 0) {
-            if(this.vy === 0) return 0;
-            return (Math.PI / 2) * (this.vy < 0 ? -1 : 1);
-        }        
-
-        if(this.vy === 0) return this.vx < 0 ? Math.PI : 0;        
-        
-        let angle = Math.abs(Math.atan(this.vy / this.vx));                
-        
-        if(this.vx < 0) angle += Math.PI / 2;        
-        if(this.vy < 0) angle *= -1;
-
-        return angle;
-    }
-
-    vectorSize() {
-        return Math.sqrt(this.vx * this.vx + this.vy * this.vy);
-    }
-
-    setAngle(angle) {
-        const length = this.vectorSize();
-        this.vx = Math.cos(angle) * length;
-        this.vy = Math.sin(angle) * length;
     }
 
     updatePosition() {
@@ -95,8 +54,8 @@ export default class Ball {
         if(this.game.dt) {
             const dts = this.game.dt / 1000;
 
-            const dxFloat = this.vx * dts;
-            const dyFloat = this.vy * dts;
+            const dxFloat = this.v.x * dts;
+            const dyFloat = this.v.y * dts;
 
             // Prefer whole pixels, but go with floats
             // in case of 0 movement
@@ -113,14 +72,14 @@ export default class Ball {
         if(outOfBoundsHorizontally || outOfBoundsVertically) {
             if(outOfBoundsHorizontally) {
                 // Move into bounds and invert velocity direction
-                this.x = utils.clamp(newX, this.radius, this.canvas.width - this.radius);
-                this.vx *= -1;
+                this.x = utils.clamp(newX, this.r, this.canvas.width - this.r);
+                this.v.x *= -1;
             }
 
             if(outOfBoundsVertically) {
                 // Move into bounds and invert velocity direction
-                this.y = utils.clamp(newY, this.radius, this.canvas.height - this.radius);
-                this.vy *= -1;
+                this.y = utils.clamp(newY, this.r, this.canvas.height - this.r);
+                this.v.y *= -1;
             }
         } else {
             this.x = newX;
@@ -133,7 +92,7 @@ export default class Ball {
 
         this.ctx.fillStyle = this.color;
         this.ctx.beginPath();
-        this.ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        this.ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
         this.ctx.fill();    
 
         // if(this.game.lines.length > 0) {
@@ -150,31 +109,32 @@ export default class Ball {
 	}
 
 	isOutOfBoundsHorizontally(x = this.x) {
-		return x - this.radius < 0 || x + this.radius > this.canvas.width;
+		return x - this.r < 0 || x + this.r > this.canvas.width;
 	}
 
 	isOutOfBoundsVertically(y = this.y) {
-		return y - this.radius < 0 || y + this.radius > this.canvas.height
+		return y - this.r < 0 || y + this.r > this.canvas.height
 	}
 
     /**
-     * Generates a random velocity
+     * Generates a random vector
      * @param {number} min Minimum velocity
      * @param {number} max Maximum velocity
      */
-    randomVelocity(min = 60, max = 600) {
-        return Math.floor((min + Math.random() * (max - min)) * (Math.random() > 0.5 ? 1 : -1));
+    randomV(min = 60, max = 600) {
+        const randomVelocity = () => Math.floor((min + Math.random() * (max - min)) * (Math.random() > 0.5 ? 1 : -1));
+        return new Vector(randomVelocity(), randomVelocity());
     }
 
     randomX() {
-        return Math.floor(this.radius + (Math.random() * (this.canvas.width - 2 * this.radius)));
+        return Math.floor(this.r + (Math.random() * (this.canvas.width - 2 * this.r)));
     }
 
     randomY() {
-        return Math.floor(this.radius + (Math.random() * (this.canvas.height - 2 * this.radius)));
+        return Math.floor(this.r + (Math.random() * (this.canvas.height - 2 * this.r)));
     }
 
-    randomRadius(min = 10, max = 30) {
+    randomR(min = 10, max = 30) {
         return Math.floor(min + Math.random() * (max - min));
     }
 }

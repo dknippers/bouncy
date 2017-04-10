@@ -8,11 +8,15 @@ export default class Vector {
         return Math.sqrt(this.x * this.x + this.y * this.y);
     }
 
-    dotProduct(v2) {
+    dot(v2) {
         return this.x * v2.x + this.y * v2.y;
     }
 
-    unitVector() {
+    /**
+     * Normalize this Vector, yielding the Unit Vector.
+     * If and only if `this` is the Null Vector, yields the Null Vector.
+     */
+    normalize() {
         const magnitude = this.magnitude();
 
         if(magnitude === 0) return new Vector(0, 0);
@@ -20,7 +24,7 @@ export default class Vector {
         return new Vector(this.x / magnitude, this.y / magnitude);
     }
 
-    tangentVector() {
+    tangent() {
         return new Vector(-this.y, this.x);
     }
 
