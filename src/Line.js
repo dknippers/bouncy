@@ -15,7 +15,7 @@ export default class Line {
 
         this.width = width == null ? 8 : width;
         this.color = color || utils.randomColor(constants.COLOR.BLACK);
-        
+
         // End-points e1 and e2 are represented by circles for bounce calculations        
         this.e1 = this.createE1();
         this.e2 = this.createE2();
@@ -28,7 +28,7 @@ export default class Line {
     createE1() {
         const endpoint = this.createEndpoint();
         this.positionE1(endpoint);
-        return endpoint;        
+        return endpoint;
     }
 
     positionE1(c = this.e1) {
@@ -48,28 +48,28 @@ export default class Line {
     }
 
     draw() {
-        this.ctx.beginPath();				
+        this.ctx.beginPath();
         this.ctx.moveTo(this.x, this.y);
-		this.ctx.lineTo(this.x + this.v.x, this.y + this.v.y);
-        this.ctx.lineWidth = this.width;		
+        this.ctx.lineTo(this.x + this.v.x, this.y + this.v.y);
+        this.ctx.lineWidth = this.width;
         this.ctx.lineCap = 'round';
-		this.ctx.strokeStyle = this.color;
+        this.ctx.strokeStyle = this.color;
         this.ctx.stroke();
     }
 
     reverse() {
         this.v = this.v.reverse();
     }
- 
-    length() {        
+
+    length() {
         return Math.sqrt(this.v.dot(this.v));
     }
 
-     /**
-     * Sets the start of this line to be at the given coordinate (x,y)
-     * @param {number} x 
-     * @param {number} y 
-     */
+    /**
+    * Sets the start of this line to be at the given coordinate (x,y)
+    * @param {number} x 
+    * @param {number} y 
+    */
     setStart(x, y) {
         this.x = x;
         this.y = y;
@@ -81,45 +81,45 @@ export default class Line {
      * @param {number} x 
      * @param {number} y 
      */
-    setEnd(x, y) {        
+    setEnd(x, y) {
         this.v.x = x - this.x;
-		this.v.y = y - this.y;
+        this.v.y = y - this.y;
         this.positionE2();
     }
 
     collidesWithBall(ball) {
         // First check endpoints
-        if(this.endpointsCollideWithBall(ball)) return true;
+        if (this.endpointsCollideWithBall(ball)) return true;
 
-        const m = new Vector(this.x - ball.x, this.y - ball.y);        
+        const m = new Vector(this.x - ball.x, this.y - ball.y);
         const c = m.dot(m) - ball.r * ball.r;
 
-        if(c <= 0) return true;
-        
-        const b = m.dot(this.v.normalize());        
-        if(b > 0) return false;
-        
+        if (c <= 0) return true;
+
+        const b = m.dot(this.v.normalize());
+        if (b > 0) return false;
+
         const discr = b * b - c;
-        if(discr < 0) return false;
+        if (discr < 0) return false;
 
         const t = -b - Math.sqrt(discr);
-        if(t > this.v.magnitude()) return false;
-        
+        if (t > this.v.magnitude()) return false;
+
         return true;
     }
 
     endpointsCollideWithBall(ball) {
-        return this.e1.collidesWithBall(ball) || this.e2.collidesWithBall(ball);        
+        return this.e1.collidesWithBall(ball) || this.e2.collidesWithBall(ball);
     }
 
-    resolveCollisionWithBall(ball) {                
+    resolveCollisionWithBall(ball) {
         // End-point collision will turn this into a ball-ball collision        
-        if(this.e1.collidesWithBall(ball)) {            
+        if (this.e1.collidesWithBall(ball)) {
             this.e1.resolveCollisionWithBall(ball);
             return;
         }
 
-        if(this.e2.collidesWithBall(ball)) {
+        if (this.e2.collidesWithBall(ball)) {
             this.e2.resolveCollisionWithBall(ball);
             return;
         }
@@ -129,8 +129,8 @@ export default class Line {
         const ut = t.normalize();
 
         // Unit vector (== tangent of line)
-        const un = ut.tangent();		
-        
+        const un = ut.tangent();
+
         // Scalar velocities in normal and tangent direction
         const bvn = un.dot(ball.v);
         const bvt = ut.dot(ball.v);
@@ -148,6 +148,6 @@ export default class Line {
         const fv = vn.add(vt);
 
         // Change ball direction
-        ball.v = fv;		
+        ball.v = fv;
     }
 }

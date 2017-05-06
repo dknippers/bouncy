@@ -19,7 +19,7 @@ export default class Vector {
     normalize() {
         const magnitude = this.magnitude();
 
-        if(magnitude === 0) return new Vector(0, 0);
+        if (magnitude === 0) return new Vector(0, 0);
 
         return new Vector(this.x / magnitude, this.y / magnitude);
     }
