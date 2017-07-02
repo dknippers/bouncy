@@ -1,4 +1,4 @@
-import './object.assign';
+import "./object.assign";
 
 // import './object.create';
 // import 'core-js/es6/symbol';

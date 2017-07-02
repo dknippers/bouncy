@@ -1,13 +1,18 @@
-import constants from './constants';
+import constants from "./constants";
 
 export function keyToDirection(key) {
     switch (key) {
-        case Constants.KEYCODES.LEFT: return Constants.DIRECTION.LEFT;
-        case Constants.KEYCODES.UP: return Constants.DIRECTION.UP;
-        case Constants.KEYCODES.RIGHT: return Constants.DIRECTION.RIGHT;
-        case Constants.KEYCODES.DOWN: return Constants.DIRECTION.DOWN;
+        case Constants.KEYCODES.LEFT:
+            return Constants.DIRECTION.LEFT;
+        case Constants.KEYCODES.UP:
+            return Constants.DIRECTION.UP;
+        case Constants.KEYCODES.RIGHT:
+            return Constants.DIRECTION.RIGHT;
+        case Constants.KEYCODES.DOWN:
+            return Constants.DIRECTION.DOWN;
 
-        default: return null;
+        default:
+            return null;
     }
 }
 
@@ -64,7 +69,7 @@ export function randomElement(array) {
  */
 export function ifNull(value, ifNull) {
     if (value != null) return value;
-    if (typeof ifNull === 'function') return ifNull();
+    if (typeof ifNull === "function") return ifNull();
     return ifNull;
 }
 
@@ -77,7 +82,7 @@ export function deg2rad(deg) {
 }
 
 export function isTouchDevice() {
-    return 'ontouchstart' in window || navigator.maxTouchPoints;
+    return "ontouchstart" in window || navigator.maxTouchPoints;
 }
 
 export function round(value, decimals) {

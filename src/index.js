@@ -1,4 +1,4 @@
-import './polyfills/index';
-import Game from './Game';
+import "./polyfills/index";
+import Game from "./Game";
 
-global.Game = new Game('canvas');
+global.Game = new Game("canvas");

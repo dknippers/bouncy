@@ -1,6 +1,6 @@
-import constants from './constants';
-import * as utils from './utils';
-import Vector from './Vector';
+import constants from "./constants";
+import * as utils from "./utils";
+import Vector from "./Vector";
 
 export default class Ball {
     constructor({ game, x, y, r, v, vx, vy, color, ignoreOverlap, isStatic }) {
@@ -52,7 +52,7 @@ export default class Ball {
      */
     overlapWith(otherBall) {
         const distance = this.distanceTo(otherBall);
-        return (this.r + otherBall.r) - distance;
+        return this.r + otherBall.r - distance;
     }
 
     distanceTo(otherBall) {
@@ -197,7 +197,9 @@ export default class Ball {
     }
 
     isOutOfBounds(x = this.x, y = this.y) {
-        return this.isOutOfBoundsHorizontally(x) || this.isOutOfBoundsVertically(y);
+        return (
+            this.isOutOfBoundsHorizontally(x) || this.isOutOfBoundsVertically(y)
+        );
     }
 
     isOutOfBoundsHorizontally(x = this.x) {
@@ -205,7 +207,7 @@ export default class Ball {
     }
 
     isOutOfBoundsVertically(y = this.y) {
-        return y - this.r < 0 || y + this.r > this.canvas.height
+        return y - this.r < 0 || y + this.r > this.canvas.height;
     }
 
     /**
@@ -214,16 +216,24 @@ export default class Ball {
      * @param {number} max Maximum velocity
      */
     randomV(min = 50, max = 500) {
-        const randomVelocity = () => Math.floor((min + Math.random() * (max - min)) * (Math.random() > 0.5 ? 1 : -1));
+        const randomVelocity = () =>
+            Math.floor(
+                (min + Math.random() * (max - min)) *
+                    (Math.random() > 0.5 ? 1 : -1)
+            );
         return new Vector(randomVelocity(), randomVelocity());
     }
 
     randomX() {
-        return Math.floor(this.r + (Math.random() * (this.canvas.width - 2 * this.r)));
+        return Math.floor(
+            this.r + Math.random() * (this.canvas.width - 2 * this.r)
+        );
     }
 
     randomY() {
-        return Math.floor(this.r + (Math.random() * (this.canvas.height - 2 * this.r)));
+        return Math.floor(
+            this.r + Math.random() * (this.canvas.height - 2 * this.r)
+        );
     }
 
     randomR(min = 10, max = 30) {

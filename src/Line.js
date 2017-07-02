@@ -1,7 +1,7 @@
-import constants from './constants';
-import * as utils from './utils';
-import Vector from './Vector';
-import Ball from './Ball';
+import constants from "./constants";
+import * as utils from "./utils";
+import Vector from "./Vector";
+import Ball from "./Ball";
 
 export default class Line {
     constructor({ game, x, y, v, color, width }) {
@@ -16,13 +16,18 @@ export default class Line {
         this.width = width == null ? 8 : width;
         this.color = color || utils.randomColor(constants.COLOR.BLACK);
 
-        // End-points e1 and e2 are represented by circles for bounce calculations        
+        // End-points e1 and e2 are represented by circles for bounce calculations
         this.e1 = this.createE1();
         this.e2 = this.createE2();
     }
 
     createEndpoint() {
-        return new Ball({ game: this.game, r: Math.floor(this.width / 2), v: new Vector(0, 0), isStatic: true });
+        return new Ball({
+            game: this.game,
+            r: Math.floor(this.width / 2),
+            v: new Vector(0, 0),
+            isStatic: true
+        });
     }
 
     createE1() {
@@ -52,7 +57,7 @@ export default class Line {
         this.ctx.moveTo(this.x, this.y);
         this.ctx.lineTo(this.x + this.v.x, this.y + this.v.y);
         this.ctx.lineWidth = this.width;
-        this.ctx.lineCap = 'round';
+        this.ctx.lineCap = "round";
         this.ctx.strokeStyle = this.color;
         this.ctx.stroke();
     }
@@ -113,7 +118,7 @@ export default class Line {
     }
 
     resolveCollisionWithBall(ball) {
-        // End-point collision will turn this into a ball-ball collision        
+        // End-point collision will turn this into a ball-ball collision
         if (this.e1.collidesWithBall(ball)) {
             this.e1.resolveCollisionWithBall(ball);
             return;
