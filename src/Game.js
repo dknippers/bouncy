@@ -24,7 +24,8 @@ export default class Game {
 
         this.setupInputEvents();
 
-        //this.testCollisions();
+        // this.testCollisions();
+        // this.lockedBalls();
 
         this.startAnimation();
     }
@@ -38,10 +39,7 @@ export default class Game {
             ignoreOverlap: true
         });
 
-        const ballBColor = utils.randomColor([
-            ballA.color,
-            constants.COLOR.BLACK
-        ]);
+        const ballBColor = utils.randomColor([ballA.color, constants.COLOR.BLACK]);
         const ballB = new Ball({
             game: this,
             x: ballA.x - 20,
@@ -117,9 +115,7 @@ export default class Game {
         this.canvas.addEventListener("keydown", e => this.onKeydown(e));
 
         if (utils.isTouchDevice()) {
-            this.canvas.addEventListener("touchstart", e =>
-                this.onTouchstart(e)
-            );
+            this.canvas.addEventListener("touchstart", e => this.onTouchstart(e));
             this.canvas.addEventListener("touchend", e => this.onTouchend(e));
             this.canvas.addEventListener("touchmove", e => this.onTouchmove(e));
         } else {
@@ -187,9 +183,7 @@ export default class Game {
         this.draw();
 
         if (this.isAnimating) {
-            this.animationId = requestAnimationFrame(
-                this.animationLoop.bind(this)
-            );
+            this.animationId = requestAnimationFrame(this.animationLoop.bind(this));
         }
     }
 
@@ -281,9 +275,7 @@ export default class Game {
                 if (!this.isAnimating) {
                     this.startAnimation();
                 }
-                requestAnimationFrame(() =>
-                    requestAnimationFrame(() => this.stopAnimation())
-                );
+                requestAnimationFrame(() => requestAnimationFrame(() => this.stopAnimation()));
                 return;
 
             default:
@@ -370,23 +362,12 @@ export default class Game {
 	 * @param {TouchEvent} e 
 	 */
     normalizedTouchCoordinates(e) {
-        if (
-            !e.target.tagName.toLowerCase() === "canvas" ||
-            e.touches.length === 0
-        )
-            return;
+        if (!e.target.tagName.toLowerCase() === "canvas" || e.touches.length === 0) return;
 
         const lastTouch = e.touches[e.touches.length - 1];
         const { clientX, clientY, target } = lastTouch;
 
-        const {
-            offsetLeft,
-            offsetTop,
-            clientWidth,
-            clientHeight,
-            width,
-            height
-        } = target;
+        const { offsetLeft, offsetTop, clientWidth, clientHeight, width, height } = target;
 
         const offsetX = clientX - offsetLeft;
         const offsetY = clientY - offsetTop;
