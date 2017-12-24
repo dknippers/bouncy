@@ -32,15 +32,15 @@ canvas {
 @media screen and (orientation: landscape) {
   .buttons button {
     width: 15vw;
-    height: 16vh;
-    font-size: 8vh;
+    height: 7.5vw;
+    font-size: 5vw;
   }
 }
 @media screen and (orientation: portrait) {
   .buttons button {
     width: 25vw;
-    height: 12vw;
-    font-size: 6vw;
+    height: 12.5vw;
+    font-size: 8.33333333vw;
   }
 }
 @media screen and (orientation: landscape) {

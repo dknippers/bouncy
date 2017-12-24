@@ -2,83 +2,84 @@
 @button-size-portrait: 25vw;
 
 .pos(@n) {
-    @media screen and (orientation: landscape) {
-        left: calc(50% - ((4 * @button-size + 3 * 0vw) / 2) + (@n * (@button-size + 0vw)));
-    }
+  @media screen and (orientation: landscape) {
+    left: calc(50% - ((4 * @button-size + 3 * 0vw) / 2) + (@n * (@button-size + 0vw)));
+  }
 
-    @media screen and (orientation: portrait) {
-        left: calc(50% - ((4 * @button-size-portrait + 3 * 0vw) / 2) + (@n * (@button-size-portrait + 0vw)));
-    }
+  @media screen and (orientation: portrait) {
+    left: calc(50% - ((4 * @button-size-portrait + 3 * 0vw) / 2) + (@n * (@button-size-portrait + 0vw)));
+  }
 }
 
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 :focus {
-    outline: none;
+  outline: none;
 }
 
 body {
-    background-color: #1a1a1a;
-    color: white;
-    margin: 0;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+  background-color: #1a1a1a;
+  color: white;
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 canvas {
-    background-color: #2e3436;
-    align-self: center;
-    width: 100vw;
+  background-color: #2e3436;
+  align-self: center;
+  width: 100vw;
 }
 
 .buttons {
-    button {
-        color: #eeeeec;
-        font-family: Consolas;
-        background: none;
-        font-family: Consolas;
-        font-weight: bold;
-        background: none;
-        @media screen and (orientation: landscape) {
-            width: @button-size;
-            height: 16vh;
-            font-size: 8vh;
-        }
+  button {
+    color: #eeeeec;
+    font-family: Consolas;
+    background: none;
+    font-family: Consolas;
+    font-weight: bold;
+    background: none;
 
-        @media screen and (orientation: portrait) {
-            width: @button-size-portrait;
-            height: 12vw;
-            font-size: 6vw;
-        }
-
-        margin: 0px;
-        position: fixed;
-        bottom: 0;
-        right: 0;
-
-        &:nth-of-type(1) {
-            .pos(0);
-        }
-
-        &:nth-of-type(2) {
-            .pos(1);
-        }
-
-        &:nth-of-type(3) {
-            .pos(2);
-        }
-
-        &:nth-of-type(4) {
-            .pos(3);
-        }
-
-        &:hover {
-            cursor: pointer;
-        }
+    @media screen and (orientation: landscape) {
+      width: @button-size;
+      height: @button-size/2;
+      font-size: @button-size/3;
     }
+
+    @media screen and (orientation: portrait) {
+      width: @button-size-portrait;
+      height: @button-size-portrait/2;
+      font-size: @button-size-portrait/3;
+    }
+
+    margin: 0px;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+
+    &:nth-of-type(1) {
+      .pos(0);
+    }
+
+    &:nth-of-type(2) {
+      .pos(1);
+    }
+
+    &:nth-of-type(3) {
+      .pos(2);
+    }
+
+    &:nth-of-type(4) {
+      .pos(3);
+    }
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
 }
