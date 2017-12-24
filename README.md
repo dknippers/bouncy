@@ -10,4 +10,4 @@ An (extremely low FPS) preview can be seen in the Preview section. Note it will 
 ```
 
 # Preview
-![Bouncy Preview](img/preview.png?raw=true "Bouncy Preview")
+![Bouncy Preview](img/preview.gif?raw=true "Bouncy Preview")
