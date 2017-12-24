@@ -1,11 +1,16 @@
 # Bouncy
 A simple toy project where balls fly around and bounce off each other. Collision physics are implemented using vector math (see docs). Collisions are far from perfect, balls can for example get stuck inside lines :-)
 
-## Build & Run
+## Run
+```
+1. Download ZIP
+2. Open build/index.html in a browser.
+```
+
+## Build from source
 ```
 1. npm install
 2. npm run build-game
-3. Open build/index.html
 ```
 
 # Preview
