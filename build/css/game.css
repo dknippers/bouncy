@@ -1,0 +1,88 @@
+* {
+  box-sizing: border-box;
+}
+:focus {
+  outline: none;
+}
+body {
+  background-color: #1a1a1a;
+  color: white;
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+canvas {
+  background-color: #2e3436;
+  align-self: center;
+  width: 100vw;
+}
+.buttons button {
+  color: #eeeeec;
+  font-family: Consolas;
+  font-weight: bold;
+  background: none;
+  margin: 0px;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+}
+@media screen and (orientation: landscape) {
+  .buttons button {
+    width: 15vw;
+    height: 16vh;
+    font-size: 8vh;
+  }
+}
+@media screen and (orientation: portrait) {
+  .buttons button {
+    width: 25vw;
+    height: 12vw;
+    font-size: 6vw;
+  }
+}
+@media screen and (orientation: landscape) {
+  .buttons button:nth-of-type(1) {
+    left: calc(20%);
+  }
+}
+@media screen and (orientation: portrait) {
+  .buttons button:nth-of-type(1) {
+    left: calc(0%);
+  }
+}
+@media screen and (orientation: landscape) {
+  .buttons button:nth-of-type(2) {
+    left: calc(35%);
+  }
+}
+@media screen and (orientation: portrait) {
+  .buttons button:nth-of-type(2) {
+    left: calc(25%);
+  }
+}
+@media screen and (orientation: landscape) {
+  .buttons button:nth-of-type(3) {
+    left: calc(50%);
+  }
+}
+@media screen and (orientation: portrait) {
+  .buttons button:nth-of-type(3) {
+    left: calc(50%);
+  }
+}
+@media screen and (orientation: landscape) {
+  .buttons button:nth-of-type(4) {
+    left: calc(65%);
+  }
+}
+@media screen and (orientation: portrait) {
+  .buttons button:nth-of-type(4) {
+    left: calc(75%);
+  }
+}
+.buttons button:hover {
+  cursor: pointer;
+}
